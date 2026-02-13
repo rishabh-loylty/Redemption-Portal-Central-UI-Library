@@ -1,187 +1,145 @@
 # Redemption Portal Central UI Library
 
-This is a central UI library for use across Redemption Portal applications. It is built using React, TypeScript, and Tailwind CSS, following the patterns established by shadcn/ui.
+A shared React UI component library for Redemption Portal applications, built with **TypeScript** and **Tailwind CSS**, following **shadcn/ui** patterns (CVA variants, `cn()` utility, design tokens via CSS variables). Optionally integrates cleanly with **HeroUI** in consuming apps.
+
+> Package: `@rishabh-loylty/redemption-portal-ui`
+
+___
 
 ## Installation
-
-Install the package from npm:
 
 ```bash
 npm i @rishabh-loylty/redemption-portal-ui
 ```
 
-## Setup
+⸻
 
-This library requires specific configuration in your consuming application's `tailwind.config.js` to work correctly.
+Setup (Tailwind v4 — Recommended)
 
-### 1. Configure Tailwind Content Path
+Tailwind v4 is “CSS-first”. The key thing you must do is ensure Tailwind scans this package inside node_modules.
 
-Add the path to the library's components in the `content` array of your `tailwind.config.js` file. This ensures Tailwind scans the library's classes and generates the necessary CSS.
+1) Ensure your app has Tailwind v4 enabled
 
-```js
-// tailwind.config.js
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    "./app/**/*.{js,ts,jsx,tsx}",
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-    // Add the library path
-    "./node_modules/@rishabh-loylty/redemption-portal-ui/dist/**/*.js",
-  ],
-  theme: {
-    // ...
-  },
-  plugins: [],
-};
+If you’re starting fresh:
+
+```
+npx create-next-app@latest my-app --ts --eslint --tailwind --app --src-dir
 ```
 
-### 2. Configure Tailwind Theme
+2) Ensure shadcn tokens exist in your app (recommended)
 
-The components in this library use custom theme variables inspired by shadcn/ui (e.g., `bg-primary`, `rounded-lg`). You **must** add these to your own `tailwind.config.js` `theme` object.
+This library uses token classes like bg-primary, text-primary-foreground, rounded-md, etc.
+The easiest way is to initialize shadcn/ui in the consuming app so the CSS variables are created:
 
-Below is the recommended base configuration. You can modify the color values to match your application's design system.
-
-```js
-// tailwind.config.js
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  // ... (content array from above)
-  theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
-    extend: {
-      colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-      },
-      keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-      },
-    },
-  },
-  plugins: [require("tailwindcss-animate")],
-};
+```
+npx shadcn@latest init
 ```
 
-You will also need to define the CSS variables, typically in your global CSS file (e.g., `globals.css`):
+If you already have your own design tokens, you can skip shadcn init — just make sure you define equivalent CSS variables (see Design Tokens below).
 
-```css
-/* globals.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+3) Add Tailwind v4 @source to your global CSS
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
-  }
+Open your app’s global CSS (usually src/app/globals.css) and ensure it contains:
 
-  .dark {
-    /* ... Define dark mode colors here if needed */
-  }
+```
+@import "tailwindcss";
+@source "../node_modules/@rishabh-loylty/redemption-portal-ui";
+```
+
+Optional: Setup HeroUI in the consuming app (Tailwind v4)
+
+If your app also uses HeroUI components, you need HeroUI’s Tailwind v4 plugin + provider.
+
+1) Install HeroUI
+```
+npm i @heroui/react framer-motion
+```
+2) Create src/hero.ts
+```
+import { heroui } from "@heroui/react";
+
+export default heroui();
+```
+3) Wire HeroUI into globals.css
+
+In src/app/globals.css:
+```
+@import "tailwindcss";
+
+/* Your central UI lib */
+@source "../node_modules/@rishabh-loylty/redemption-portal-ui";
+
+/* HeroUI */
+@plugin "../hero.ts";
+@source "../node_modules/@heroui/theme/dist";
+```
+
+4) Add HeroUIProvider (Next.js App Router)
+
+Create src/app/providers.tsx:
+```
+"use client";
+
+import { HeroUIProvider } from "@heroui/react";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return <HeroUIProvider>{children}</HeroUIProvider>;
 }
 ```
 
-Finally, you will need to install `tailwindcss-animate`:
+Wrap your app in src/app/layout.tsx:
 
-```bash
-npm i tailwindcss-animate
+```
+import "./globals.css";
+import { Providers } from "./providers";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+}
 ```
 
-## Usage Example
+⸻
 
-```jsx
+Usage
+```
 import { Button } from "@rishabh-loylty/redemption-portal-ui";
 
-export default function MyPage() {
-  return <Button variant="outline">Click Me</Button>;
+export default function Page() {
+  return (
+    <div style={{ padding: 24 }}>
+      <Button>Default</Button>
+      <Button variant="outline" style={{ marginLeft: 12 }}>
+        Outline
+      </Button>
+    </div>
+  );
 }
 ```
 
----
+⸻
 
-## For Library Maintainers
+For Library Maintainers
 
-### Publishing a New Version
+Publishing
+	1.	Bump version:
 
-1.  Increment the version number:
-    ```bash
-    npm version patch # or minor, major
-    ```
-2.  Publish to npm:
-    ```bash
-    npm publish --access public
-    ```
-The `prepublishOnly` script will automatically build the project.
+```
+npm version patch
+```
+
+	2.	Publish:
+
+```
+npm publish --access public
+```
+
+Tip: Verify what will be published:
+```
+npm pack --dry-run
+```
