@@ -7,7 +7,7 @@ This is a central UI library for use across Redemption Portal applications. It i
 Install the package from npm:
 
 ```bash
-npm i @rishabh-loylty/ui
+npm i @rishabh-loylty/redemption-portal-ui
 ```
 
 ## Setup
@@ -27,7 +27,7 @@ module.exports = {
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
     // Add the library path
-    "./node_modules/@rishabh-loylty/ui/dist/**/*.js",
+    "./node_modules/@rishabh-loylty/redemption-portal-ui/dist/**/*.js",
   ],
   theme: {
     // ...
@@ -163,7 +163,7 @@ npm i tailwindcss-animate
 ## Usage Example
 
 ```jsx
-import { Button } from "@rishabh-loylty/ui";
+import { Button } from "@rishabh-loylty/redemption-portal-ui";
 
 export default function MyPage() {
   return <Button variant="outline">Click Me</Button>;
